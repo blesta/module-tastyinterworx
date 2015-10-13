@@ -1,0 +1,147 @@
+<div class="page-header">
+    <h4><?php $this->_("tastyinterworx.accountusage");?></h4>
+</div>
+
+<div class="table-responsive" style="text-transform: capitalize;">
+    <table class="table table-curved table-striped">
+        <thead>
+            <tr>
+                <th><?php $this->_("tastyinterworx.field");?></th>
+                <th><?php $this->_("tastyinterworx.value");?></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><?php $this->_("tastyinterworx.account_usage.domain");?></td>
+                <td><?php $this->Html->_($accountDetails["domain"]);?></td>
+            </tr>
+            <?php 
+            $num = 1;
+            if(isset ($name_servers) && count($name_servers) > 0){
+            foreach ($name_servers as $nmkey => $nmvalue) {
+            ?>
+            <tr>
+                <td><?php $this->_("tastyinterworx.service.name_server");echo " ".$num; ?></td>
+                <td><?php $this->Html->_($name_servers[$nmkey]);?></td>
+            </tr>
+            <?php $num++;} } ?>
+            <tr>
+                <td><?php $this->_("tastyinterworx.account_usage.username");?></td>
+                <td><?php $this->Html->_($accountDetails["unixuser"]);?></td>
+            </tr>
+            <tr>
+                <td><?php $this->_("tastyinterworx.account_usage.ip");?></td>
+                <td><?php $this->Html->_($accountDetails["ip"]);?></td>
+            </tr>
+            <tr>
+                <td><?php $this->_("tastyinterworx.account_usage.ftplimit");?></td>
+                <td><?php $this->Html->_($accountDetails["ftp_accounts"]);?></td>
+            </tr>
+            <tr>
+                <td><?php $this->_("tastyinterworx.account_usage.sqllimit");?></td>
+                <td><?php $this->Html->_($accountDetails["mysql_dbs"]);?></td>
+            </tr>
+            <tr>
+                <td><?php $this->_("tastyinterworx.account_usage.emailimit");?></td>
+                <td><?php $this->Html->_($accountDetails["email_boxes"]);?></td>
+            </tr>
+            <tr>
+                <td><?php $this->_("tastyinterworx.account_usage.sublimit");?></td>
+                <td><?php $this->Html->_($accountDetails["subdomains"]);?></td>
+            </tr>
+            <tr>
+                <td><?php $this->_("tastyinterworx.account_usage.parkedlimit");?></td>
+                <td><?php $this->Html->_($accountDetails["pointer_domains"]);?></td>
+            </tr>
+            <tr>
+                <td><?php $this->_("tastyinterworx.account_usage.addonslimit");?></td>
+                <td><?php $this->Html->_($accountDetails["slave_domains"]);?></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<hr />
+<div class="clearfix"></div>
+<div class="text-align:center;">
+    <div class="btn-group" role="group">
+						 <?php if($pmeta->siteworx_login == true){ ?>
+						<?php
+						$this->Form->create($this->Html->safe("https://" . $this->Html->ifSet($module_row->meta->hostname) . ":{$module_row->meta->port}/siteworx/index.php?action=login"), array('target' => "_blank"));
+						$this->Form->fieldHidden("email", $this->Html->ifSet($service_fields->email));
+						$this->Form->fieldHidden("password", $this->Html->ifSet($service_fields->password));
+						$this->Form->fieldHidden("domain", $this->Html->ifSet($service_fields->domain));
+						?>
+        <button type="button" id="siteworx_login<?php $this->Html->_($service->id);?>" href="#" class="btn btn-sm btn-default"><i class="fa fa-cogs"></i> <?php $this->_("tastyinterworx.siteworx_login");?></button>
+						<?php
+						$this->Form->end();
+						?>
+						<?php } ?>
+    </div>
+</div>
+<div class="clearfix"></div>
+<hr />
+<?php 
+	$disk = array(
+		'used' => round($this->Html->ifSet($accountDetails["storage_used"], 0), 2),
+		'limit' => round($this->Html->ifSet($accountDetails["storage"], 0), 2)
+	);
+	$unlimited = empty($disk['limit']);
+	$percent_used = ($unlimited ? 0 : round(($this->Html->ifSet($disk['used'], 0)/$this->Html->ifSet($disk['limit']))*100, 0));
+                 if ($percent_used >= 75) {
+                    $class = "progress-bar-danger";
+                } else if ($percent_used >= 50) {
+                    $class = "progress-bar-warning";
+                } else {
+                    $class = "";
+                }
+                if($accountDetails["storage"] >= 999999999){
+                    $disk_limit_view = "Unlimited";
+                }else{
+                    $disk_limit_view = $accountDetails["storage"];
+                }
+?>
+<p><strong><?php $this->_("tastyinterworx.account_usage.disk_title");?>: <span class="badge"><?php echo ($unlimited ? $this->_("tastyinterworx.account_usage.usage_unlimited", true, $this->Html->safe($disk['used'])) : $this->_("tastyinterworx.account_usage.usage", true, $this->Html->safe($disk['used']), $this->Html->safe($disk_limit_view)));?></span></strong></p>
+<div class="progress">
+    <div class="progress-bar progress-bar-striped active <?php $this->Html->_($class);?>" role="progressbar" aria-valuenow="<?php $this->Html->_($percent_used);?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php $this->Html->_($percent_used);?>%;">
+    </div>
+</div>
+
+
+<div class="clearfix"></div>
+
+<?php 
+	$bandwidth = array(
+		'used' => round($this->Html->ifSet($accountDetails["bandwidth_used"], 0), 2),
+		'limit' => round($this->Html->ifSet($accountDetails["bandwidth"], 0), 2)
+	);
+	$unlimited = empty($bandwidth['limit']);
+	$percent_used = ($unlimited ? 0 : round(($this->Html->ifSet($bandwidth['used'], 0)/$this->Html->ifSet($bandwidth['limit']))*100, 0));
+                 if ($percent_used >= 75) {
+                    $class = "progress-bar-danger";
+                } else if ($percent_used >= 50) {
+                    $class = "progress-bar-warning";
+                } else {
+                    $class = "";
+                }
+                if($accountDetails["bandwidth"] >= 999999999){
+                    $bnd_limit_view = "Unlimited";
+                }else{
+                    $bnd_limit_view = $accountDetails["bandwidth"];
+                }
+?>
+<p><strong><?php $this->_("tastyinterworx.account_usage.bandwidth_title");?>: <span class="badge"><?php echo ($unlimited ? $this->_("tastyinterworx.account_usage.usage_unlimited", true, $this->Html->safe($bandwidth['used'])) : $this->_("tastyinterworx.account_usage.usage", true, $this->Html->safe($bandwidth['used']), $this->Html->safe($bnd_limit_view)));?></span></strong></p>
+<div class="progress">
+    <div class="progress-bar progress-bar-striped active <?php $this->Html->_($class);?>" role="progressbar" aria-valuenow="<?php $this->Html->_($percent_used);?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php $this->Html->_($percent_used);?>%;">
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#nodeworx_login<?php $this->Html->_($service->id);?>,#siteworx_login<?php $this->Html->_($service->id);?>,#phpmyadmin_login<?php $this->Html->_($service->id);?>,#filemaneger_login<?php $this->Html->_($service->id);?>').click(function (e) {
+            e.preventDefault();
+
+            $(this).closest('form').submit();
+        });
+    });
+</script>

@@ -1,0 +1,163 @@
+<div class="page-header">
+    <h4><?php $this->_("tastyinterworx.accountusage");?></h4>
+</div>
+
+<div class="table-responsive" style="text-transform: capitalize;">
+    <table class="table table-curved table-striped">
+        <thead>
+            <tr>
+                <th><?php $this->_("tastyinterworx.field");?></th>
+                <th><?php $this->_("tastyinterworx.value");?></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><?php $this->_("tastyinterworx.account_usage.id");?></td>
+                <td><?php $this->Html->_($accountDetails["id"]);?></td>
+            </tr>
+            <tr>
+                <td><?php $this->_("tastyinterworx.account_usage.username");?></td>
+                <td><?php $this->Html->_($accountDetails["nickname"]);?></td>
+            </tr>
+            <tr>
+                <td><?php $this->_("tastyinterworx.account_usage.email");?></td>
+                <td><?php $this->Html->_($accountDetails["email"]);?></td>
+            </tr>
+            <tr>
+                <td><?php $this->_("tastyinterworx.account_usage.ftplimit");?></td>
+                <td><?php $this->Html->_($accountDetails["RSL_OPT_FTP_ACCOUNTS"]);?></td>
+            </tr>
+            <tr>
+                <td><?php $this->_("tastyinterworx.account_usage.sqllimit");?></td>
+                <td><?php $this->Html->_($accountDetails["RSL_OPT_MYSQL_DBS"]);?></td>
+            </tr>
+            <tr>
+                <td><?php $this->_("tastyinterworx.account_usage.emailimit");?></td>
+                <td><?php $this->Html->_($accountDetails["RSL_OPT_EMAIL_BOXES"]);?></td>
+            </tr>
+            <tr>
+                <td><?php $this->_("tastyinterworx.account_usage.sublimit");?></td>
+                <td><?php $this->Html->_($accountDetails["RSL_OPT_SUBDOMAINS"]);?></td>
+            </tr>
+            <tr>
+                <td><?php $this->_("tastyinterworx.account_usage.parkedlimit");?></td>
+                <td><?php $this->Html->_($accountDetails["RSL_OPT_POINTER_DOMAINS"]);?></td>
+            </tr>
+            <tr>
+                <td><?php $this->_("tastyinterworx.account_usage.addonslimit");?></td>
+                <td><?php $this->Html->_($accountDetails["RSL_OPT_SLAVE_DOMAINS"]);?></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<hr />
+<div class="clearfix"></div>
+<div class="text-align:center;">
+    <div class="btn-group" role="group">
+    <?php if($pmeta->nodeworx_login == true){ ?>
+						<?php
+						$this->Form->create($this->Html->safe("https://" . $this->Html->ifSet($module_row->meta->hostname) . ":{$module_row->meta->port}/nodeworx/index.php?action=login"), array('target' => "_blank"));
+						$this->Form->fieldHidden("email", $this->Html->ifSet($service_fields->email));
+						$this->Form->fieldHidden("password", $this->Html->ifSet($service_fields->password));
+						?>
+        <button type="button" id="nodeworx_login<?php $this->Html->_($service->id);?>" href="#" class="btn btn-sm btn-default"><i class="fa fa-cogs"></i> <?php $this->_("tastyinterworx.nodeworx_login");?></button>
+						<?php
+						$this->Form->end();
+						?>
+                                               <?php } ?>
+    </div>
+</div>
+<div class="clearfix"></div>
+<hr />
+<?php 
+	$child = array(
+		'used' => round($this->Html->ifSet($accountDetails["accounts_used"], 0), 2),
+		'limit' => round($this->Html->ifSet($accountDetails["RSL_OPT_SITEWORX_ACCOUNTS"], 0), 2)
+	);
+	$unlimited = empty($child['limit']);
+	$percent_used = ($unlimited ? 0 : round(($this->Html->ifSet($child['used'], 0)/$this->Html->ifSet($child['limit']))*100, 0));
+                 if ($percent_used >= 75) {
+                    $class = "progress-bar-danger";
+                } else if ($percent_used >= 50) {
+                    $class = "progress-bar-warning";
+                } else {
+                    $class = "";
+                }
+                if($accountDetails["RSL_OPT_SITEWORX_ACCOUNTS"] >= 999999999){
+                    $acc_limit_view = "Unlimited";
+                }else{
+                    $acc_limit_view = $accountDetails["RSL_OPT_SITEWORX_ACCOUNTS"];
+                }
+?>
+<p><strong><?php $this->_("tastyinterworx.account_usage.childaccounts");?>: <span class="badge"><?php echo $accountDetails["accounts_used"];?> / <?php echo $acc_limit_view; ?> </span></strong></p>
+<div class="progress">
+    <div class="progress-bar progress-bar-striped active <?php $this->Html->_($class);?>" role="progressbar" aria-valuenow="<?php $this->Html->_($percent_used);?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php $this->Html->_($percent_used);?>%;">
+    </div>
+</div>
+<div class="clearfix"></div>
+<hr />
+<?php 
+	$disk = array(
+		'used' => round($this->Html->ifSet($accountDetails["storage_used"], 0), 2),
+		'limit' => round($this->Html->ifSet($accountDetails["RSL_OPT_STORAGE"], 0), 2)
+	);
+	$unlimited = empty($disk['limit']);
+	$percent_used = ($unlimited ? 0 : round(($this->Html->ifSet($disk['used'], 0)/$this->Html->ifSet($disk['limit']))*100, 0));
+                 if ($percent_used >= 75) {
+                    $class = "progress-bar-danger";
+                } else if ($percent_used >= 50) {
+                    $class = "progress-bar-warning";
+                } else {
+                    $class = "";
+                }
+                if($accountDetails["RSL_OPT_STORAGE"] >= 999999999){
+                    $disk_limit_view = "Unlimited";
+                }else{
+                    $disk_limit_view = $accountDetails["RSL_OPT_STORAGE"];
+                }
+?>
+<p><strong><?php $this->_("tastyinterworx.account_usage.disk_title");?>: <span class="badge"><?php echo ($unlimited ? $this->_("tastyinterworx.account_usage.usage_unlimited", true, $this->Html->safe($disk['used'])) : $this->_("tastyinterworx.account_usage.usage", true, $this->Html->safe($disk['used']), $this->Html->safe($disk_limit_view)));?></span></strong></p>
+<div class="progress">
+    <div class="progress-bar progress-bar-striped active <?php $this->Html->_($class);?>" role="progressbar" aria-valuenow="<?php $this->Html->_($percent_used);?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php $this->Html->_($percent_used);?>%;">
+    </div>
+</div>
+
+
+<div class="clearfix"></div>
+
+<?php 
+	$bandwidth = array(
+		'used' => round($this->Html->ifSet($accountDetails["bandwidth_used"], 0), 2),
+		'limit' => round($this->Html->ifSet($accountDetails["RSL_OPT_BANDWIDTH"], 0), 2)
+	);
+	$unlimited = empty($bandwidth['limit']);
+	$percent_used = ($unlimited ? 0 : round(($this->Html->ifSet($bandwidth['used'], 0)/$this->Html->ifSet($bandwidth['limit']))*100, 0));
+                 if ($percent_used >= 75) {
+                    $class = "progress-bar-danger";
+                } else if ($percent_used >= 50) {
+                    $class = "progress-bar-warning";
+                } else {
+                    $class = "";
+                }
+                if($accountDetails["RSL_OPT_BANDWIDTH"] >= 999999999){
+                    $bnd_limit_view = "Unlimited";
+                }else{
+                    $bnd_limit_view = $accountDetails["RSL_OPT_BANDWIDTH"];
+                }
+?>
+<p><strong><?php $this->_("tastyinterworx.account_usage.bandwidth_title");?>: <span class="badge"><?php echo ($unlimited ? $this->_("tastyinterworx.account_usage.usage_unlimited", true, $this->Html->safe($bandwidth['used'])) : $this->_("tastyinterworx.account_usage.usage", true, $this->Html->safe($bandwidth['used']), $this->Html->safe($bnd_limit_view)));?></span></strong></p>
+<div class="progress">
+    <div class="progress-bar progress-bar-striped active <?php $this->Html->_($class);?>" role="progressbar" aria-valuenow="<?php $this->Html->_($percent_used);?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php $this->Html->_($percent_used);?>%;">
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#nodeworx_login<?php $this->Html->_($service->id);?>,#siteworx_login<?php $this->Html->_($service->id);?>,#phpmyadmin_login<?php $this->Html->_($service->id);?>,#filemaneger_login<?php $this->Html->_($service->id);?>').click(function (e) {
+            e.preventDefault();
+
+            $(this).closest('form').submit();
+        });
+    });
+</script>

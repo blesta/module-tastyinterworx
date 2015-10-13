@@ -1,0 +1,137 @@
+<div role="tabpanel">
+
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active"><a href="#databases_area" aria-controls="databases_area" role="tab" data-toggle="tab"><?php $this->_("tastyinterworx.db.databases_area");?></a></li>
+        <li role="presentation"><a href="#users_area" aria-controls="users_area" role="tab" data-toggle="tab"><?php $this->_("tastyinterworx.db.users_area");?></a></li>
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="databases_area">
+            <div class="page-header">
+                <h4><?php $this->_("tastyinterworx.db.databases_area");?> <button type="button" id="addnewdb" class="btn btn-xs btn-default"><i class="fa fa-plus-circle"></i> <?php $this->_("tastyinterworx.add_new");?></button></h4>
+            </div>
+            <div class="table-responsive" style="text-transform: capitalize;">
+                <table class="table table-curved table-striped">
+                    <thead>
+                        <tr>
+                            <th><?php $this->_("tastyinterworx.db.database");?></th>
+                            <th><?php $this->_("tastyinterworx.db.size");?></th>
+                            <th><?php $this->_("tastyinterworx.options");?></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+     <?php 
+     if(count($listdatabases) > 0 ) {
+     foreach ($listdatabases as $key => $value) {
+    
+ ?>
+                        <tr>
+                            <td><?php $this->Html->_($listdatabases[$key]['fqdn']);?></td>
+                            <td><?php $this->Html->_($listdatabases[$key]['storage']);?></td>
+                            <td>  
+                                                <?php 
+                            $this->Form->create();
+                            $this->Form->fieldHidden("name", $this->Html->ifSet($listdatabases[$key]['name']), array('id'=>"name"));
+                            ?> 
+                                <button type="submit" name="delete_db" class="btn btn-default btn-xs">
+                                    <i class="fa fa-ban"></i> <?php $this->_("tastyinterworx.delete");?>
+                                </button>
+                            <?php $this->Form->end(); ?>
+                            </td>
+                        </tr>
+				<?php
+     } } else {
+?>
+                        <tr>
+                            <td colspan="3" align="center"><?php $this->_("tastyinterworx.no_results");?></td>
+                        </tr>
+            <?php
+     }			?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="users_area">
+            <div class="page-header">
+                <h4><?php $this->_("tastyinterworx.db.users_area");?> <button type="button" id="addnewdbuser" class="btn btn-xs btn-default"><i class="fa fa-plus-circle"></i> <?php $this->_("tastyinterworx.add_new");?></button></h4>
+            </div>
+            <div class="table-responsive" style="text-transform: capitalize;">
+                <table class="table table-curved table-striped">
+                    <thead>
+                        <tr>
+                            <th><?php $this->_("tastyinterworx.db.user");?></th>
+                            <th><?php $this->_("tastyinterworx.db.databases_area");?></th>
+                            <th><?php $this->_("tastyinterworx.options");?></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+     <?php 
+     if(count($listdbuser) > 0 ) {
+     foreach ($listdbuser as $key => $value) {
+    
+ ?>
+                        <tr>
+                            <td><?php $this->Html->_($listdbuser[$key]['fqun']);?></td>
+                            <td><?php $this->Html->_($listdbuser[$key]['databases']);?></td>
+                            <td>  
+                                <div class="btn-group" role="group">
+                                    <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                        <i class="fa fa-cogs"></i> <?php $this->_("tastyinterworx.options");?>
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li class="changepass"><a href="javascript:void(0)" id="<?php echo $listdbuser[$key]['name'];?>"><?php $this->_("tastyinterworx.changepassword");?></a></li>
+                                        <li class="addusertodb"><a href="javascript:void(0)" id="<?php echo $listdbuser[$key]['name'];?>"><?php $this->_("tastyinterworx.db.adduser_db");?></a></li>
+                            <?php 
+                            $this->Form->create();
+                            $this->Form->fieldHidden("name", $this->Html->ifSet($listdbuser[$key]['name']), array('id'=>"name"));
+                            ?> 
+                                        <li><button class="buttonlink" name="delete_dbuser" type="submit"><?php $this->_("tastyinterworx.delete");?></button></li>
+                            <?php $this->Form->end(); ?>
+
+                                    </ul>
+                                </div>
+
+                            </td>
+                        </tr>
+				<?php
+     } } else {
+?>
+                        <tr>
+                            <td colspan="3" align="center"><?php $this->_("tastyinterworx.no_results");?></td>
+                        </tr>
+            <?php
+     }			?>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#addnewdb").click(function () {
+            doAjaxRmv("<?php echo $this->Html->_($this->base_uri, true) ."services/manage/".$service_id."/databases/addnewdb/";?>", "<?php $this->_("tastyinterworx.add_new");?> <?php $this->_("tastyinterworx.db.database");?>");
+                    });
+                    $("#addnewdbuser").click(function () {
+                        doAjaxRmv("<?php echo $this->Html->_($this->base_uri, true) ."services/manage/".$service_id."/databases/addnewdbuser/";?>", "<?php $this->_("tastyinterworx.add_new");?> <?php $this->_("tastyinterworx.db.dbuser");?>");
+                                });
+                                $("li.changepass a").click(function () {
+                                    var name = $(this).attr('id');
+                                    var url_get = "name=" + name;
+                                    doAjaxWithData("<?php echo $this->Html->_($this->base_uri, true) ."services/manage/".$service_id."/databases/changepass/";?>", "<?php $this->_("tastyinterworx.db.dbuser");?>", url_get);
+                                });
+                                $("li.addusertodb a").click(function () {
+                                    var user = $(this).attr('id');
+                                    var url_get = "user=" + user;
+                                    doAjaxWithData("<?php echo $this->Html->_($this->base_uri, true) ."services/manage/".$service_id."/databases/addusertodb/";?>", "<?php $this->_("tastyinterworx.db.dbuser");?>", url_get);
+                                });
+                            });
+</script>

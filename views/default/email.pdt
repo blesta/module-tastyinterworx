@@ -1,0 +1,74 @@
+<div class="page-header">
+    <h4><?php $this->_("tastyinterworx.email");?> <button type="button" id="add_new" class="btn btn-xs btn-default"><i class="fa fa-plus-circle"></i> <?php $this->_("tastyinterworx.add_new");?></button></h4>
+</div>
+<div class="table-responsive" style="text-transform: capitalize;">
+    <table class="table table-curved table-striped">
+        <thead>
+            <tr>
+                <th><?php $this->_("tastyinterworx.email.email_address");?></th>
+                <th><?php $this->_("tastyinterworx.email.quota");?></th>
+                <th><?php $this->_("tastyinterworx.options");?></th>
+            </tr>
+        </thead>
+        <tbody>
+     <?php 
+     if(isset($email) && !empty($email) && count($email) > 0 ) {
+                            $i = 0;
+                        foreach ($email as $key => $value) {
+    
+ ?>
+            <tr>
+                <td><?php $this->Html->_($email[$i]['email']); ?></td>
+                <td><?php 
+                    if($email[$i]['quota'] === "##LG_NOQUOTA##"){
+                        echo "Unlimited";
+                    } else {
+                        $this->Html->_($email[$i]['quota']);
+                    }
+                    
+                    ?></td>
+                <td>  
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                            <i class="fa fa-cogs"></i> <?php $this->_("tastyinterworx.options");?>
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li class="changepass"><a href="javascript:void(0)" id="<?php echo $email[$i]['username'];?>"><?php $this->_("tastyinterworx.changepassword");?></a></li>
+                            <?php 
+                            $this->Form->create();
+                            $this->Form->fieldHidden("username", $this->Html->ifSet($email[$i]['username']), array('id'=>"username"));
+                            ?> 
+                            <li><button class="buttonlink" name="delete_email" type="submit"><?php $this->_("tastyinterworx.delete");?></button></li>
+                            <?php $this->Form->end(); ?>
+
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+				<?php
+                                $i = $i + 1;
+                        }
+                             } else {
+?>
+            <tr>
+                <td colspan="3" align="center"><?php $this->_("tastyinterworx.no_results");?></td>
+            </tr>
+            <?php
+     }			?>
+        </tbody>
+    </table>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("li.changepass a").click(function () {
+            var email = $(this).attr('id');
+            var url_get = "email=" + email;
+            doAjaxWithData("<?php echo $this->Html->_($this->base_uri, true) ."services/manage/".$service_id."/email/changepassword/";?>", "<?php $this->_("tastyinterworx.email");?>", url_get);
+        });
+        $("#add_new").click(function () {
+            doAjaxRmv("<?php echo $this->Html->_($this->base_uri, true) ."services/manage/".$service_id."/email/addnew/";?>", "<?php $this->_("tastyinterworx.add_new");?> <?php $this->_("tastyinterworx.email");?>");
+                    });
+                });
+</script>

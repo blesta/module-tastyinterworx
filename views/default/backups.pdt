@@ -1,0 +1,120 @@
+<div role="tabpanel">
+
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active"><a href="#backups_area" aria-controls="backups_area" role="tab" data-toggle="tab"><?php $this->_("tastyinterworx.backups");?></a></li>
+        <li role="presentation"><a href="#backupssch_area" aria-controls="backupssch_area" role="tab" data-toggle="tab"><?php $this->_("tastyinterworx.backup_schedule");?></a></li>
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="backups_area">
+            <div class="page-header">
+                <h4><?php $this->_("tastyinterworx.backups");?> <button type="button" id="add_new_backup" class="btn btn-xs btn-default"><i class="fa fa-plus-circle"></i> <?php $this->_("tastyinterworx.add_new");?></button></h4>
+            </div>
+            <div class="table-responsive" style="text-transform: capitalize;">
+                <table class="table table-curved table-striped">
+                    <thead>
+                        <tr>
+                            <th><?php $this->_("tastyinterworx.backup");?></th>
+                            <th><?php $this->_("tastyinterworx.file_size");?></th>
+                            <th><?php $this->_("tastyinterworx.status");?></th>
+                            <th><?php $this->_("tastyinterworx.options");?></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+     <?php 
+     if(count($listbackups) > 0 ) {
+     foreach ($listbackups as $key => $value) {
+    
+ ?>
+                        <tr>
+                            <td><?php $this->Html->_($listbackups[$key]['filepath']); ?></td>
+                            <td><?php $this->Html->_($listbackups[$key]['filesize']); ?></td>
+                            <td><?php if($listbackups[$key]['complete'] === TRUE){
+                            echo "Completed";
+                            } else {
+                            echo 'Not Completed';
+                            }
+                            ?>
+                            </td>
+                            <td>  
+                                                <?php 
+                            $this->Form->create();
+                            $this->Form->fieldHidden("backups", $this->Html->ifSet($listbackups[$key]['filename']), array('id'=>"backups"));
+                            ?> 
+                                <button type="submit" name="delete_backup" class="btn btn-default btn-xs">
+                                    <i class="fa fa-ban"></i> <?php $this->_("tastyinterworx.delete");?>
+                                </button>
+                            <?php $this->Form->end(); ?>
+                            </td>
+                        </tr>
+				<?php
+     } } else {
+?>
+                        <tr>
+                            <td colspan="4" align="center"><?php $this->_("tastyinterworx.no_results");?></td>
+                        </tr>
+            <?php
+     }			?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="backupssch_area">
+            <div class="page-header">
+                <h4><?php $this->_("tastyinterworx.backup_schedule");?> <button type="button" id="add_new_sch" class="btn btn-xs btn-default"><i class="fa fa-plus-circle"></i> <?php $this->_("tastyinterworx.add_new");?></button></h4>
+            </div>
+            <div class="table-responsive" style="text-transform: capitalize;">
+                <table class="table table-curved table-striped">
+                    <thead>
+                        <tr>
+                            <th><?php $this->_("tastyinterworx.frequency");?></th>
+                            <th><?php $this->_("tastyinterworx.type");?></th>
+                            <th><?php $this->_("tastyinterworx.location");?></th>
+                            <th><?php $this->_("tastyinterworx.email_address");?></th>
+                            <th><?php $this->_("tastyinterworx.rotate");?></th>
+                            <th><?php $this->_("tastyinterworx.hour");?></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+     <?php 
+     if(count($listbackupschedule) > 0 ) {
+     foreach ($listbackupschedule as $k => $value) {
+    
+ ?>
+                        <tr>
+                            <td><?php $this->Html->_($listbackupschedule[$k]["_properties"]['frequency']); ?></td>
+                            <td><?php $this->Html->_($listbackupschedule[$k]["_properties"]['type']); ?></td>
+                            <td><?php $this->Html->_($listbackupschedule[$k]["_properties"]['location']); ?></td>
+                            <td><?php $this->Html->_($listbackupschedule[$k]["_properties"]['email_address']); ?></td>
+                            <td><?php $this->Html->_($listbackupschedule[$k]["_properties"]['rotate']); ?></td>
+                            <td><?php $this->Html->_($listbackupschedule[$k]["_properties"]['hour']); ?></td>
+                        </tr>
+				<?php
+     } } else {
+?>
+                        <tr>
+                            <td colspan="6" align="center"><?php $this->_("tastyinterworx.no_results");?></td>
+                        </tr>
+            <?php
+     }			?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#add_new_backup").click(function () {
+            doAjaxRmv("<?php echo $this->Html->_($this->base_uri, true) ."services/manage/".$service_id."/backups/addnew/";?>", "<?php $this->_("tastyinterworx.backups");?>");
+        });
+        $("#add_new_sch").click(function () {
+            doAjaxRmv("<?php echo $this->Html->_($this->base_uri, true) ."services/manage/".$service_id."/backups/addnewsch/";?>", "<?php $this->_("tastyinterworx.add_new");?> <?php $this->_("tastyinterworx.backup_schedule");?>");
+                    });
+                });
+</script>

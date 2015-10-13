@@ -1,0 +1,53 @@
+<div class="page-header">
+    <h4><?php $this->_("tastyinterworx.pointerdomains");?> <button type="button" id="add_new" class="btn btn-xs btn-default"><i class="fa fa-plus-circle"></i> <?php $this->_("tastyinterworx.add_new");?></button></h4>
+</div>
+<div class="table-responsive" style="text-transform: capitalize;">
+    <table class="table table-curved table-striped">
+        <thead>
+            <tr>
+                <th><?php $this->_("tastyinterworx.domain");?></th>
+                <th><?php $this->_("tastyinterworx.points_to");?></th>
+                <th><?php $this->_("tastyinterworx.options");?></th>
+            </tr>
+        </thead>
+        <tbody>
+     <?php 
+     if(count($listpointer) > 0 ) {
+                            $i = 0;
+                        foreach ($listpointer as $key => $value) {
+    
+ ?>
+            <tr>
+                <td><?php $this->Html->_($listpointer[$i]['domain']); ?></td>
+                <td><?php $this->Html->_($listpointer[$i]['points_to']); ?></td>
+                <td>  
+                            <?php 
+                            $this->Form->create();
+                            $this->Form->fieldHidden("domain", $this->Html->ifSet($listpointer[$i]['domain']), array('id'=>"domain"));
+                            ?> 
+                    <button class="btn btn-default btn-xs" name="delete_domain" type="submit"><i class="fa fa-ban"></i> <?php $this->_("tastyinterworx.delete");?></button>
+                            <?php $this->Form->end(); ?>
+
+                </td>
+            </tr>
+				<?php
+                                $i = $i + 1;
+                        }
+                             } else {
+?>
+            <tr>
+                <td colspan="3" align="center"><?php $this->_("tastyinterworx.no_results");?></td>
+            </tr>
+            <?php
+     }			?>
+        </tbody>
+    </table>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#add_new").click(function () {
+            doAjaxRmv("<?php echo $this->Html->_($this->base_uri, true) ."services/manage/".$service_id."/pointerdomains/addnew/";?>", "<?php $this->_("tastyinterworx.add_new");?> <?php $this->_("tastyinterworx.pointerdomain");?>");
+                    });
+                });
+</script>
