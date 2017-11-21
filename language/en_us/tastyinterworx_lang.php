@@ -1,5 +1,5 @@
 <?php
-$lang['tastyinterworx.name'] = "Tasty InterWorx V1.2";
+$lang['tastyinterworx.name'] = "Tasty InterWorx V1.3";
 $lang['tastyinterworx.module_row'] = "Server";
 $lang['tastyinterworx.module_row_plural'] = "Servers";
 $lang['tastyinterworx.module_group'] = "Server Group";
