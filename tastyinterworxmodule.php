@@ -2,7 +2,7 @@
 
 class Tastyinterworxmodule extends Module {
 
-    private static $version = "1.3.0";
+    private static $version = "1.2.2";
     private static $authors = array(array('name' => "ModulesBakery.com.", 'url' => "http://www.modulesbakery.com"));
 
     public function __construct() {
@@ -2348,8 +2348,6 @@ class Tastyinterworxmodule extends Module {
                 $module_row = $rows[0];
             unset($rows);
         }
-
-        $packages = [];
         if ($module_row) {
             if (isset($vars->meta['type']) && $vars->meta['type'] === "reseller" && !$this->gettastyinterworxIsReseller($module_row)) {
                 $packages = $this->gettastyinterworxPackages($module_row, true);
@@ -2531,10 +2529,6 @@ class Tastyinterworxmodule extends Module {
     public function addModuleRow(array &$vars) {
         $meta_fields = array("hostname", "apikey", "account_count", "use_ssl", "name_servers", "port");
         $encrypted_fields = array("hostname", "apikey", "account_count", "use_ssl", "name_servers", "port");
-
-        if (!isset($vars['use_ssl'])) {
-            $vars['use_ssl'] = 'false';
-        }
 
         $this->Input->setRules($this->getRowRules($vars));
 
@@ -2746,54 +2740,7 @@ class Tastyinterworxmodule extends Module {
         return $fields;
     }
 
-    /**
-     * Attempts to validate service info. This is the top-level error checking method. Sets Input errors on failure.
-     *
-     * @param stdClass $package A stdClass object representing the selected package
-     * @param array $vars An array of user supplied info to satisfy the request
-     * @return bool True if the service validates, false otherwise. Sets Input errors when false.
-     */
-    public function validateService($package, array $vars = null)
-    {
-        $rules = $this->getServiceRules($vars);
-
-        if ($package->meta->type == "reseller") {
-            unset($rules['domain']);
-        }
-
-        $this->Input->setRules($rules);
-        return $this->Input->validates($vars);
-    }
-
-    /**
-     * Attempts to validate an existing service against a set of service info updates. Sets Input errors on failure.
-     *
-     * @param stdClass $service A stdClass object representing the service to validate for editing
-     * @param array $vars An array of user-supplied info to satisfy the request
-     * @return bool True if the service update validates or false otherwise. Sets Input errors when false.
-     */
-    public function validateServiceEdit($service, array $vars = null)
-    {
-        $rules = $this->getServiceRules($vars, true);
-
-        $service_fields = $this->serviceFieldsToObject($service->fields);
-        if (isset($service_fields->type) && $service_fields->type == "reseller") {
-            unset($rules['domain']);
-        }
-
-        $this->Input->setRules($rules);
-        return $this->Input->validates($vars);
-    }
-
-    /**
-     * Returns the rule set for adding/editing a service
-     *
-     * @param array $vars A list of input vars
-     * @param bool $edit True to get the edit rules, false for the add rules
-     * @return array Service rules
-     */
-    private function getServiceRules(array $vars = null, $edit = false)
-    {
+    public function validateService($package, array $vars = null, $edit = false) {
         $rules = array(
             'domain' => array(
                 'format' => array(
@@ -2802,8 +2749,11 @@ class Tastyinterworxmodule extends Module {
                 )
             )
         );
+        if ($package->meta->type == "reseller")
+            unset($rules['domain']);
 
-        return $rules;
+        $this->Input->setRules($rules);
+        return $this->Input->validates($vars);
     }
 
     private function generateUsername($hostname) {
@@ -2957,7 +2907,7 @@ class Tastyinterworxmodule extends Module {
         $row = $this->getModuleRow($package->module_row);
         $api = $this->getApi($row->meta);
 
-        $this->validateServiceEdit($service, $vars);
+        $this->validateService($package, $vars, true);
 
         if ($this->Input->errors())
             return;
